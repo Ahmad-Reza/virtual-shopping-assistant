@@ -1,45 +1,37 @@
-# tools.py
+import requests
 from typing import List, Dict
 
-
-def search_products(name: str, price: float, size: str) -> List[Dict]:
-    """Mock function to search for fashion products."""
-    return [
-        {"name": name, "price": 35, "size": size, "available": True},
-        {"name": "Alternative " + name, "color": "Blue", "price": 38, "size": "M", "available": False}
-    ]
+# Define API base URL
+BASE_URL = "http://127.0.0.1:8000"
 
 
-def estimate_shipping(location: str, delivery_date: str) -> Dict:
-    """Mock function to estimate shipping time & cost."""
-    return {
-        "location": location,
-        "estimated_cost": 5.99,
-        "estimated_delivery": delivery_date
-    }
+# Product Search Tool
+def search_products(query: str, max_price: int, size: str):
+    response = requests.get(f"{BASE_URL}/search-products/",
+                            params={"query": query, "max_price": max_price, "size": size})
+    return response.json()
 
 
-def apply_discount(promo_code: str, base_price: float) -> Dict:
-    """Mock function to validate promo codes."""
-    discount = 10 if promo_code == "SAVE10" else 0
-    final_price = base_price - (base_price * discount / 100)
-    return {"promo_code": promo_code, "discount_applied": discount, "final_price": final_price}
+# Discount Checker Tool
+def check_discount(code: str, price: int):
+    response = requests.get(f"{BASE_URL}/apply-discount/", params={"code": code, "price": price})
+    return response.json()
 
 
-def compare_prices(product_name: str) -> List[Dict]:
-    """Mock function to compare prices across different stores."""
-    return [
-        {"store": "StoreA", "price": 80},
-        {"store": "StoreB", "price": 75},
-        {"store": "StoreC", "price": 78}
-    ]
+# Shipping Time Estimator Tool
+def estimate_shipping(product_name: str, deadline: str):
+    response = requests.get(f"{BASE_URL}/estimate-shipping/",
+                            params={"product_name": product_name, "deadline": deadline})
+    return response.json()
 
 
-def check_return_policy(store_name: str) -> Dict:
-    """Mock function to return store's return policy."""
-    policies = {
-        "StoreA": "30-day return policy with free returns.",
-        "StoreB": "14-day return policy, return shipping costs apply.",
-        "StoreC": "No returns on discounted items."
-    }
-    return {"store": store_name, "return_policy": policies.get(store_name, "Return policy not found.")}
+# Competitor Price Comparison Tool
+def compare_prices(product_name: str):
+    response = requests.get(f"{BASE_URL}/compare-prices/", params={"product_name": product_name})
+    return response.json()
+
+
+# Return Policy Checker Tool
+def check_return_policy(website: str):
+    response = requests.get(f"{BASE_URL}/return-policy/", params={"website": website})
+    return response.json()
