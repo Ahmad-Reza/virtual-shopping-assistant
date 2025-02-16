@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Shopping Assistant</string>
+    <string name="user_hint_msg">Type your message...</string>
 </resources>
