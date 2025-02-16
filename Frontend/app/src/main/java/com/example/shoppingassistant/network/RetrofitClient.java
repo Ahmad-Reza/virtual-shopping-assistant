@@ -11,13 +11,13 @@ public class RetrofitClient {
 
     private static Retrofit retrofit = null;
 
-    public static ShoppingApi getInstance() {
+    public static ApiService getInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit.create(ShoppingApi.class);
+        return retrofit.create(ApiService.class);
     }
 }

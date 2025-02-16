@@ -5,13 +5,16 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.shoppingassistant.R;
+import com.example.shoppingassistant.model.AssistantResponse;
 import com.example.shoppingassistant.model.ProductSearchModel;
+import com.example.shoppingassistant.model.UserQuery;
+import com.example.shoppingassistant.network.ApiService;
 import com.example.shoppingassistant.network.RetrofitClient;
-import com.example.shoppingassistant.network.ShoppingApi;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,20 +35,45 @@ public class MainActivity extends AppCompatActivity {
 
         askButton.setOnClickListener(v -> {
             String query = userInput.getText().toString();
-            searchProducts(query);
+//            searchProducts(query);
+            askShoppingAssistant(query);
         });
     }
 
+    private void askShoppingAssistant(String userInput) {
+        UserQuery userQuery = new UserQuery(userInput);
+
+        ApiService apiService = RetrofitClient.getInstance();
+        Call<AssistantResponse> call = apiService.askAssistant(userQuery);
+        call.enqueue(new Callback<AssistantResponse>() {
+            @Override
+            public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String assistantReply = response.body().getResponse();
+                    Toast.makeText(MainActivity.this, assistantReply, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AssistantResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "API Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     private void searchProducts(String query) {
-        ShoppingApi apiService = RetrofitClient.getInstance();
+        ApiService apiService = RetrofitClient.getInstance();
 
         // Fetch products
         apiService.searchProducts("Floral Skirt", 40, "S").enqueue(new Callback<ProductSearchModel>() {
             @Override
             public void onResponse(Call<ProductSearchModel> call, Response<ProductSearchModel> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                   // for (Product product : response.body()) {
-                     //   Log.d("API Response", "Product: " + product.getName() + ", Price: $" + product.getPrice());
+                    // for (Product product : response.body()) {
+                    //   Log.d("API Response", "Product: " + product.getName() + ", Price: $" + product.getPrice());
                     //}
                 }
             }
