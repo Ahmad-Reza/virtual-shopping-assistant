@@ -1,0 +1,14 @@
+*.iml
+Frontend/.gradle
+/Frontend/local.properties
+/Frontend/.idea
+.DS_Store
+/Frontend/build
+/captures
+.externalNativeBuild
+.cxx
+/Frontend/local.properties
+
+/Backend/.idea
+/Backend/.env
+/Backend/__pycache__
